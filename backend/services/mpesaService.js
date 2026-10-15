@@ -1,9 +1,9 @@
-import axios from "axios";
+﻿import axios from "axios";
 
 const getMpesaEnvironment = () => {
   const environment = (process.env.MPESA_ENV || "sandbox").trim().toLowerCase();
 
-  if (!['sandbox', 'production'].includes(environment)) {
+  if (!["sandbox", "production"].includes(environment)) {
     throw new Error('MPESA_ENV must be either "sandbox" or "production"');
   }
 
@@ -59,17 +59,14 @@ export const getMpesaAccessToken = async () => {
   const consumerSecret = getRequiredEnv("MPESA_CONSUMER_SECRET");
 
   try {
-    const response = await axios.get(
-      `${getMpesaBaseUrl()}/oauth/v1/generate`,
-      {
-        params: { grant_type: "client_credentials" },
-        auth: {
-          username: consumerKey,
-          password: consumerSecret,
-        },
-        timeout: 15000,
+    const response = await axios.get(`${getMpesaBaseUrl()}/oauth/v1/generate`, {
+      params: { grant_type: "client_credentials" },
+      auth: {
+        username: consumerKey,
+        password: consumerSecret,
       },
-    );
+      timeout: 15000,
+    });
 
     if (!response.data?.access_token) {
       throw new Error("Daraja OAuth response did not contain an access token");
@@ -136,7 +133,6 @@ export const initiateStkPush = async ({
   };
 
   try {
-    // Never log the full payload: Password is derived from the shortcode and passkey.
     console.log("Initiating STK Push:", {
       BusinessShortCode: shortcode,
       Amount: payload.Amount,
@@ -204,8 +200,6 @@ export const queryStkPushStatus = async (checkoutRequestId) => {
       },
     );
 
-    // Do not treat ResponseCode=0 by itself as proof of payment. The route
-    // must also inspect the returned ResultCode and match it to the callback.
     return response.data;
   } catch (error) {
     console.error("M-Pesa STK Query failed:", {
