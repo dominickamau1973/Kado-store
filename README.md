@@ -1,6 +1,47 @@
-# MERN E-commerce Project
+# Kado Store
 
-React + Vite frontend with a Node.js/Express/Mongoose backend and Safaricom Daraja STK Push integration.
+Kado Store is a full-stack e-commerce application for browsing and purchasing products. Customers can create accounts, manage a cart, place orders, and pay using Safaricom M-Pesa. Administrators can manage the product catalog and order fulfillment through a dedicated dashboard.
+
+## Project overview
+
+The application is split into two independently run projects:
+
+- **Frontend:** React single-page application built with Vite. It provides the storefront, customer account and order pages, and admin dashboard.
+- **Backend:** Node.js and Express REST API. It uses MongoDB through Mongoose for user, product, and order data, JWT-based authentication, role-protected admin operations, and Safaricom Daraja for M-Pesa STK Push payments.
+
+### Main capabilities
+
+- Browse and view products, add items to a shopping cart, and place orders.
+- Register and log in; view personal orders and order details.
+- Pay for an order through M-Pesa STK Push and track payment status.
+- Administer products, review orders, update order status, and view dashboard statistics.
+- Upload product images to the backend's local `uploads` directory.
+
+### Repository layout
+
+```text
+backend/
+  config/       MongoDB connection
+  controllers/  User, product, and order request handlers
+  middleware/   Authentication, authorization, and image uploads
+  models/       Mongoose user, product, and order models
+  routes/       REST API routes, including M-Pesa
+  services/     Daraja payment integration
+frontend/
+  src/
+    components/ Shared UI components
+    context/    Authentication and cart state
+    pages/      Storefront, customer, and admin views
+    services/   API and resource clients
+```
+
+## Technology stack
+
+- **Frontend:** React, React Router, Vite, Tailwind CSS, and Axios
+- **Backend:** Node.js, Express, Mongoose, and MongoDB
+- **Authentication:** JSON Web Tokens and bcrypt
+- **Payments:** Safaricom Daraja M-Pesa STK Push
+- **Package manager:** pnpm
 
 ## 1. Requirements
 
@@ -12,7 +53,7 @@ React + Vite frontend with a Node.js/Express/Mongoose backend and Safaricom Dara
 ## 2. Backend setup
 
 ```bash
-cd E-commerce/backend
+cd backend
 cp .env.example .env
 pnpm install
 pnpm dev
@@ -27,7 +68,7 @@ The backend runs on port `5000` by default. `/healthz` reports API/database read
 Open a second terminal:
 
 ```bash
-cd E-commerce/frontend
+cd frontend
 cp .env.example .env
 pnpm install
 pnpm dev
@@ -68,29 +109,20 @@ Mock mode is rejected unless `NODE_ENV=development`, and callbacks require the s
 - Uploaded images currently use local disk storage. Choose persistent storage before deploying to a host with an ephemeral filesystem.
 - Review stock handling and concurrency, rate limiting, actual-image signature validation, and pending-payment reconciliation before taking live payments.
 
-## 7. Dependency update required before deployment
+## 7. Dependency maintenance
 
-The saved frontend lockfile currently resolves Vite `8.3.0`. The published Vite security advisory GHSA-rq7h-c2jc-7f22 lists `8.3.0` through `8.3.2` as affected and `8.3.3` as patched. The environment used to prepare this archive could not reach the package registry, so its lockfile could not be regenerated safely. Before deployment, from `E-commerce/frontend`, run:
-
-```bash
-pnpm up vite@8.3.4
-pnpm install
-pnpm lint
-pnpm build
-```
-
-Commit the updated `package.json` and `pnpm-lock.yaml` together. Do not rely on a stale lockfile or deploy the Vite `8.3.0` resolution. Advisory: https://github.com/vitejs/vite/security/advisories/GHSA-rq7h-c2jc-7f22
+The frontend manifest and lockfile currently resolve Vite `8.3.4`, which is newer than the `8.3.3` patched version cited by advisory GHSA-rq7h-c2jc-7f22. Continue to review dependency advisories and update the manifest and lockfile together. After frontend dependency updates, run the lint and build checks below.
 
 ## 8. Checks
 
-From `E-commerce/frontend`:
+From `frontend`:
 
 ```bash
 pnpm lint
 pnpm build
 ```
 
-From `E-commerce/backend`, syntax-check the route/service/server with:
+From `backend`, syntax-check the route/service/server with:
 
 ```bash
 node --check server.js
